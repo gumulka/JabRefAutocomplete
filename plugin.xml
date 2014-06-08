@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="de.gumulka.jabref.main" version="0.1" class="de.gumulka.jabref.main.Fetch">
+
+	<requires>
+		<import plugin-id="net.sf.jabref.core"/>
+	</requires>
+
+	<!-- Will load code and resources from the home folder -->
+	<runtime>
+		<library type="code" path="./" id="code"/>
+		<library type="code" path="/lib/jsoup-1.6.1.jar" id="jsoup"/>
+		<library type="resources" path="./" id="resouces"/>
+
+		<library type="resources" path="img/" id="icons">
+			
+			</library>
+	</runtime>
+	
+	<extension id="PushToAutoComplete" plugin-id="net.sf.jabref.core" point-id="PushToApplication">
+		<parameter id="pushToApp" value="de.gumulka.jabref.main.Fetch" />
+		<parameter id="name" value="Push to Autocomplete" />
+		<parameter id="description" value="Push to JabRef autocomplete" />
+	</extension>
+
+</plugin>
