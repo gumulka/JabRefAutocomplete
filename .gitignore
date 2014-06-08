@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 *.class
 *.jar
+=======
+lib/
+*.class
+>>>>>>> 3b33476a13db7132ae4adb9766be3f2d6ff26e63
