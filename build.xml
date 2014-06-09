@@ -17,13 +17,14 @@
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<jar destfile="JabRefAutocomplete.jar" basedir="bin" update="yes">
 			<manifest>
-				<attribute name="Main-Class" value="de.gumulka.jabref.main.Fetch" />
+				<attribute name="Main-Class" value="de.gumulka.jabref.test.Test" />
 			</manifest>
 			<fileset dir=".">
 				<include name="plugin.xml" />
 				<include name="resources/" />
 			</fileset>
 		</jar>
+		<copy todir="/home/gumulka/.jabref/plugins/" file="JabRefAutocomplete.jar" />
 	</target>
 	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
 	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
