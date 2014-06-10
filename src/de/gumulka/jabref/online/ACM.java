@@ -85,13 +85,15 @@ public class ACM extends Search {
 			
 			doc = res.parse();
 			if(doc.select("p:contains(Found)").first().text().contains("Found 1 within")) {
-				con =  Jsoup.connect("http://dl.acm.org/" + doc.select("a[href*=citation.cfm").first().attr("href") + "&preflayout=flat");
+				String url = "http://dl.acm.org/" + doc.select("a[href*=citation.cfm").first().attr("href") + "&preflayout=flat";
+				con =  Jsoup.connect(url);
 				con.referrer("http://dl.acm.org/results.cfm");
 				con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
 				for(Entry<String, String> cookie : res.cookies().entrySet()) {
 					con.cookie(cookie.getKey(), cookie.getValue());
 				}
 				result = new Result(entry);
+				result.setField("url", url.substring(0, url.indexOf('&')));
 				extractCitation(con);
 			}
 			
@@ -109,12 +111,12 @@ public class ACM extends Search {
 		Element titleel = doc.select("img[src=images/apdf.jpg]").first();
 		if(titleel != null) {
 			String title = titleel.attr("title");
-			result.setTitle(title);
+			result.setField("title",title);
 		} else {
 			titleel = doc.select("img[src*=portalparts.acm.org]").first();
 			if(titleel != null) {
 				String title = titleel.attr("title");
-				result.setTitle(title);
+				result.setField("title",title);
 			}
 		}
 			
@@ -126,12 +128,12 @@ public class ACM extends Search {
 		int index = authors.lastIndexOf(',');
 		if(index >0)
 			authors = authors.substring(0, index);
-		result.setAuthor(authors);
+		result.setField("author", authors);
 		
 		Element abstractel = doc.select("div[class=flatbody]").select("div[style=display:inline]").first();
 		if(abstractel!=null) {
 			String abs = abstractel.text();
-			result.setAbstract(abs);
+			result.setField("abstract",abs);
 		}
 		
 //		System.out.println("Year");
@@ -140,16 +142,26 @@ public class ACM extends Search {
 		Element doiel = doc.select("a[href*=dx.doi.org]").first();
 		if(doiel!=null) {
 			String doi = doiel.text();
-			result.setDoi(doi);
+			doi = doi.trim();
+			index = doi.indexOf(' ');
+			if(index >0)
+				doi = doi.substring(0, index);
+			result.setField("doi",doi);
 		}	
 		
 		Element noteel = doc.select("table:contains(Published in)").last();
 		if(noteel!= null) {
 			String note = noteel.text();
-			index = note.indexOf("table of contents");
+			index = note.indexOf("table of contents");
 			if(index >0)
 				note = note.substring(0, index);
-			result.setNote(note);
+			index = note.indexOf(" doi>");
+			if(index >0)
+				note = note.substring(0, index);
+			index = note.indexOf(" Full text:");
+			if(index >0)
+				note = note.substring(0, index);
+			result.setField("note", note);
 		}
 	}
 	

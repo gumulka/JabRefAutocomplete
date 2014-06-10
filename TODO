@@ -1,4 +1,6 @@
 
+README und LICENCE fertig machen.
+
 Class Fetch gets initialized two times, make it one.
 
 Catch nullpointer exceptions in ACM extractCitation

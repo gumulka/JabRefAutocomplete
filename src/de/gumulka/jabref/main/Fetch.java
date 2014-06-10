@@ -3,11 +3,14 @@ package de.gumulka.jabref.main;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import net.sf.jabref.BasePanel;
 import net.sf.jabref.BibtexDatabase;
@@ -95,17 +98,22 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 	public void operationCompleted(BasePanel panel) {
 		waiting.setVisible(false);
 		result = new JFrame("Results");
-		result.setSize(500, 200);
 		result.setLocationRelativeTo(panel);
 		if (results.size() > 0) {
-			result.add(new JLabel("Results:"));
+			result.setSize(1000, 500);
+			Box temp = new Box(BoxLayout.Y_AXIS);
+			temp.add(new JLabel("Results:"));
 			for (Result r : results) {
-				result.add(new Resultview(r));
+				temp.add(new Resultview(r));
 			}
+			JScrollPane sp = new JScrollPane(temp); //,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			result.add(sp);
 		} else {
+			result.setSize(500, 200);
 			result.add(new JLabel("There are no results."));
 		}
 		result.setVisible(true);
+		results.clear();
 	}
 
 	public boolean requiresBibtexKeys() {
