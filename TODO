@@ -1,4 +1,7 @@
 
+Class Fetch gets initialized two times, make it one.
+
+Catch nullpointer exceptions in ACM extractCitation
 
 Make Parsing for Springer, ACM, IEEE, DBLP and Citeseer
 Login into Springer and ACM - Store Login info
