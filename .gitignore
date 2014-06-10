@@ -1,4 +1,3 @@
 *.class
-*.jar
-src/org/
+lib/
 src/de/gumulka/jabref/test/

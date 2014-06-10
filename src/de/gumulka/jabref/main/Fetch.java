@@ -77,13 +77,11 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			String keyString, MetaData metaData) {
 
 		waiting = new JFrame("Syncing with Servers");
-		// waiting.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		waiting.setSize(250, 100);
 		waiting.setLocationRelativeTo(null);
 		waiting.add(new JLabel("Syncing " + entrys.length
 				+ " publications.\n Please wait."));
 		waiting.setVisible(true);
-		System.out.println("KeyString: " + keyString);
 		for (BibtexEntry e : entrys) {
 			System.out.println("Searching for: \nAuthor: "
 					+ e.getField("author") + "\nTitle: " + e.getField("title"));
@@ -106,7 +104,7 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			for (Result r : results) {
 				temp.add(new Resultview(r));
 			}
-			JScrollPane sp = new JScrollPane(temp); //,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			JScrollPane sp = new JScrollPane(temp);
 			result.add(sp);
 		} else {
 			result.setSize(500, 200);

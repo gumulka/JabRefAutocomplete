@@ -3,8 +3,6 @@
  */
 package de.gumulka.jabref.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import net.sf.jabref.BibtexEntry;
@@ -16,33 +14,29 @@ import net.sf.jabref.BibtexEntry;
 public class Result {
 	
 		private BibtexEntry entry;
-		private Map<String,String> entrys = new HashMap<String,String>();
+		private BibtexEntry second;
 		
 		
-		public Result(BibtexEntry entry){
-			this.setEntry(entry);
+		public Result(BibtexEntry old, BibtexEntry found){
+			this.entry = old;
+			this.second = found;
+			second.setField("bibtexkey", entry.getField("bibtexkey"));
 		}
 
 
 		public String getField(String name) {
-			return entrys.get(name);
+			return second.getField(name);
 		}
 		
 		public void setField(String name, String value) {
-			entrys.put(name, value);
+			second.setField(name, value);
 		}
 		
 		public Set<String> getAllFields() {
-			return entrys.keySet();
+			return second.getAllFields();
 		}
 		
 		public BibtexEntry getEntry() {
 			return entry;
 		}
-
-
-		private void setEntry(BibtexEntry entry) {
-			this.entry = entry;
-		}
-		
 }
