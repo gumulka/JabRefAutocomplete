@@ -22,6 +22,7 @@ import de.gumulka.jabref.controller.Settingscontroller;
 import de.gumulka.jabref.model.Result;
 import de.gumulka.jabref.online.ACM;
 import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.SpringerLink;
 import de.gumulka.jabref.view.Resultview;
 import de.gumulka.jabref.view.Settingspanel;
 
@@ -87,7 +88,12 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 					+ e.getField("author") + "\nTitle: " + e.getField("title"));
 			Search acm = new ACM(e);
 			acm.search();
+			Search springer = new SpringerLink(e);
+			springer.search();
 			Result res = acm.getResult();
+			if (res != null)
+				results.add(res);
+			res = springer.getResult();
 			if (res != null)
 				results.add(res);
 		}

@@ -60,7 +60,7 @@ public class ACM extends Search {
 			tmp = entry.getField("author");
 			if (tmp == null)
 				tmp = "";
-			con.data("people", tmp);
+			con.data("people", formatAuthors(tmp));
 			con.data("peoplehow", "and");
 			con.data("keyword", "");
 			con.data("keywordhow", "AND");
@@ -96,17 +96,7 @@ public class ACM extends Search {
 				String url = "http://dl.acm.org/"
 						+ doc.select("a[href*=citation.cfm").first()
 								.attr("href") + "&preflayout=flat";
-				con = Jsoup.connect(url);
-				con.referrer("http://dl.acm.org/results.cfm");
-				con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
-				for (Entry<String, String> cookie : res.cookies().entrySet()) {
-					con.cookie(cookie.getKey(), cookie.getValue());
-				}
-				String id = url.substring(url.indexOf("id=") + 3);
-				id = id.substring(0, id.indexOf('&'));
-				result = extractBibtex(id);
-				extractWebInfo(con);
-
+				result = extract(entry, url);
 			}
 
 		} catch (IOException e) {
@@ -115,23 +105,37 @@ public class ACM extends Search {
 
 	}
 
-	private Result extractBibtex(String id) throws IOException {
-		int index = id.lastIndexOf('.');
-		if(index>0)
-			id = id.substring(index+1);
-		String url = "http://dl.acm.org/exportformats.cfm?id=" + id
-				+ "&expformat=bibtex";
-		Connection con = Jsoup.connect(url).timeout(10000);
-		con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
-		con.referrer("about:blank");
+	public static Result extract(BibtexEntry entry, String url) {
+		try {
+			String id = url.substring(url.indexOf("id=") + 3);
 
-		Document doc = con.get();
-		String bibtex = doc.select("PRE").first().text();
-		BibtexEntry second = BibtexParser.singleFromString(bibtex);
-		return new Result(entry, second);
+			id = id.substring(0, id.indexOf('&'));
+			int index = id.lastIndexOf('.');
+			if (index > 0)
+				id = id.substring(index + 1);
+
+			String url2 = "http://dl.acm.org/exportformats.cfm?id=" + id
+					+ "&expformat=bibtex";
+			Connection con = Jsoup.connect(url2).timeout(10000);
+			con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
+			con.referrer("about:blank");
+			Document doc = con.get();
+			String bibtex = doc.select("PRE").first().text();
+			BibtexEntry second = BibtexParser.singleFromString(bibtex);
+			Result res = new Result(entry, second);
+			extractWebInfo(url, res);
+			return res;
+		} catch (IOException e) {
+		}
+		return null;
 	}
 
-	private void extractWebInfo(Connection con) throws IOException {
+	private static void extractWebInfo(String url, Result res)
+			throws IOException {
+		if (!url.contains("&preflayout=flat"))
+			url += "&preflayout=flat";
+		Connection con = Jsoup.connect(url);
+		con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
 		con.timeout(10000);
 		Document doc = con.get();
 
@@ -139,7 +143,7 @@ public class ACM extends Search {
 				.select("div[style=display:inline]").first();
 		if (abstractel != null) {
 			String abs = abstractel.text();
-			result.setField("abstract", abs);
+			res.setField("abstract", abs);
 		}
 
 		int index;
@@ -156,7 +160,7 @@ public class ACM extends Search {
 			index = note.indexOf(" Full text:");
 			if (index > 0)
 				note = note.substring(0, index);
-			result.setField("note", note);
+			res.setField("note", note);
 		}
 	}
 

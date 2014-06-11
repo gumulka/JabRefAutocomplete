@@ -44,19 +44,32 @@ public class Resultview extends JPanel {
 		this.add(new JLabel(result.getEntry().getCiteKey()), c);
 		c.gridx = 3;
 		JButton confirmall = new JButton("import dataset");
-		confirmall.setActionCommand("copyall");
+		confirmall.setActionCommand("COPYALL");
 		confirmall.addActionListener(new CopyButton(result));
 		this.add(confirmall, c);
 		c.gridwidth = 1;
 		c.gridy++;
+		if(!result.getEntry().getType().equals(result.getType())) {
+			c.gridx = 0;
+			this.add(new JLabel("TYPE"),c);
+			c.gridx = 1;
+			this.add(new JTextArea(result.getType().toString()),c);
+			c.gridx = 2;
+			this.add(new JTextArea(result.getType().toString()),c);
+			c.gridx = 3;
+			JButton confirm = new JButton("change Type");
+			confirm.setActionCommand("TYPECHANGE");
+			confirm.addActionListener(new CopyButton(result));
+			this.add(confirm, c);
+			c.gridy++;
+		}
+			
 		for (String s : keys) {
-			if (s != "title" && s != "author") {
-				if (result.getField(s) == null)
-					continue;
-				if (result.getField(s).equalsIgnoreCase(
-						result.getEntry().getField(s)))
-					continue;
-			}
+			if (result.getField(s) == null)
+				continue;
+			if (result.getField(s).equalsIgnoreCase(
+					result.getEntry().getField(s)))
+				continue;
 			title = new JLabel(s);
 			orign = new JTextArea(result.getEntry().getField(s));
 			((JTextArea) orign).setLineWrap(true);

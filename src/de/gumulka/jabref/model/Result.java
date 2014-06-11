@@ -6,6 +6,7 @@ package de.gumulka.jabref.model;
 import java.util.Set;
 
 import net.sf.jabref.BibtexEntry;
+import net.sf.jabref.BibtexEntryType;
 
 /**
  * @author Fabian Pflug
@@ -23,6 +24,9 @@ public class Result {
 			second.setField("bibtexkey", entry.getField("bibtexkey"));
 		}
 
+		public BibtexEntryType getType() {
+			return second.getType();
+		}
 
 		public String getField(String name) {
 			return second.getField(name);

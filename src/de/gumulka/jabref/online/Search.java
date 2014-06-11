@@ -23,6 +23,22 @@ public class Search extends Thread {
 		start();
 	}
 
+
+	protected static String formatAuthors(String authors) {
+		String[] splittet = authors.split(" and ");
+		String ret = "";
+		int index;
+		for(String s : splittet) {
+			index = s.indexOf(',');
+			if(index>0) {
+				String Vorname = s.substring(index+1).trim();
+				String Nachname = s.substring(0, index).trim();
+				ret += '"' + Vorname + " " + Nachname + "\" ";
+			}
+		}
+		return ret;
+	}
+	
 	public Result getResult() {
 		try {
 			join();

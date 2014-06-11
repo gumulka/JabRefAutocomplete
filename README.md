@@ -12,8 +12,8 @@ DBLP, CiteSeer and Google Scholar.
 
 ## Install
 
-If you are using JabRef 2.5 or later, you can install plugins using the Plugin Manager. Go to Plugins -> Manage Plugins. Click Install plugin, and 
-choose the jar file containing the plugin.
+Download the [JabRefAutocomplete.jar](https://github.com/gumulka/JabRefAutocomplete/blob/master/JabRefAutocomplete.jar?raw=true)
+Go to Plugins -> Manage Plugins. Click Install plugin, and choose the jar file. Now restart JabRef and you are done.
 
 ## Use
 

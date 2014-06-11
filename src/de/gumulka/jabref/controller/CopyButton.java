@@ -16,9 +16,12 @@ public class CopyButton implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		String field = arg0.getActionCommand();
-		if (field.equals("copyall")) {
+		if (field.equals("COPYALL")) {
 			for(String s : result.getAllFields())
 				result.getEntry().setField(s, result.getField(s));
+			result.getEntry().setType(result.getType());
+		} else if(field.equals("TYPECHANGE")) {
+			result.getEntry().setType(result.getType());
 		} else {
 			result.getEntry().setField(field, result.getField(field));
 		}
