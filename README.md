@@ -1,19 +1,15 @@
 ## WARNING
 
-This is a very early development status. Also some of it might work, there are non functioning buttons and you might DESTROY your 
-database.
-Please use this only if you want to experiment with it!
-
+This is a very early development status. Also it works as a proof of concept, there are non 
+functioning buttons, and it does not find all papers, even if they are listed on the sites.
 
 ## What it is:
 
-Autocomplete is a plugin for JabRef, which trys to autocomplete the entrys in your database using information provided by ACM, SpringerLink, IEEE, 
-DBLP, CiteSeer and Google Scholar.
+Autocomplete is a plugin for JabRef, which trys to autocomplete the entrys in your database using information provided by ACM, SpringerLink, IEEE, DBLP, CiteSeer and others.
 
 ## Install
 
-Download the [JabRefAutocomplete.jar](https://github.com/gumulka/JabRefAutocomplete/blob/master/JabRefAutocomplete.jar?raw=true)
-Go to Plugins -> Manage Plugins. Click Install plugin, and choose the jar file. Now restart JabRef and you are done.
+Download the [JabRefAutocomplete.jar](https://github.com/gumulka/JabRefAutocomplete/blob/master/JabRefAutocomplete.jar?raw=true) Go to Plugins -> Manage Plugins. Click Install plugin, and choose the jar file. Now restart JabRef and you are done.
 
 ## Use
 
@@ -29,5 +25,11 @@ Autocomplete uses this great library:
 
 
 ## Contribute
+I only know about the websites, where papers are published I read. So if there are some sites, you think should be included in this tool, feel free to [mail](mailto:jabrefautocomplete@gummu.de) me with a link to an example paper on this site.
 
-Feel free to [mail](mailto:jabrefautocomplete@gummu.de) me at any time if you have any improvements.
+Planned:
+- CiteSeer
+- DBLP
+- ScienceDirect
+- arXiv.org
+- oxfordjournals.org

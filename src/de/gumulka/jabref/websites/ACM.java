@@ -1,9 +1,10 @@
 /**
  * 
  */
-package de.gumulka.jabref.online;
+package de.gumulka.jabref.websites;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Map.Entry;
 
 import net.sf.jabref.BibtexEntry;
@@ -15,7 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import de.gumulka.jabref.model.Result;
+import de.gumulka.jabref.online.Search;
 
 /**
  * @author Fabian Pflug
@@ -23,8 +24,8 @@ import de.gumulka.jabref.model.Result;
  */
 public class ACM extends Search {
 
-	public ACM(BibtexEntry e) {
-		super(e);
+	public ACM() {
+		super("ACM");
 	}
 
 	public void run() {
@@ -52,7 +53,7 @@ public class ACM extends Search {
 			String tmp = entry.getField("title");
 			if (tmp == null)
 				tmp = "";
-			tmp = tmp.replace(":", "");
+			tmp = formatTitle(tmp);
 			con.data("allofem", tmp);
 			con.data("anyofem", "");
 			con.data("noneofem", "");
@@ -96,7 +97,9 @@ public class ACM extends Search {
 				String url = "http://dl.acm.org/"
 						+ doc.select("a[href*=citation.cfm").first()
 								.attr("href") + "&preflayout=flat";
-				result = extract(entry, url);
+				result = extract(url);
+				if(result!=null)
+					extractWebInfo(url);
 			}
 
 		} catch (IOException e) {
@@ -104,13 +107,14 @@ public class ACM extends Search {
 		}
 
 	}
-
-	public static Result extract(BibtexEntry entry, String url) {
+	
+	public BibtexEntry extract(String url) {
 		try {
 			String id = url.substring(url.indexOf("id=") + 3);
-
-			id = id.substring(0, id.indexOf('&'));
-			int index = id.lastIndexOf('.');
+			int index = id.indexOf('&');
+			if(index >0)
+				id = id.substring(0, index);
+			index = id.lastIndexOf('.');
 			if (index > 0)
 				id = id.substring(index + 1);
 
@@ -121,17 +125,13 @@ public class ACM extends Search {
 			con.referrer("about:blank");
 			Document doc = con.get();
 			String bibtex = doc.select("PRE").first().text();
-			BibtexEntry second = BibtexParser.singleFromString(bibtex);
-			if(second == null) return null;
-			Result res = new Result(entry, second);
-			extractWebInfo(url, res);
-			return res;
+			return BibtexParser.singleFromString(bibtex);
 		} catch (IOException e) {
 		}
 		return null;
 	}
 
-	private static void extractWebInfo(String url, Result res)
+	private void extractWebInfo(String url)
 			throws IOException {
 		if (!url.contains("&preflayout=flat"))
 			url += "&preflayout=flat";
@@ -144,7 +144,7 @@ public class ACM extends Search {
 				.select("div[style=display:inline]").first();
 		if (abstractel != null) {
 			String abs = abstractel.text();
-			res.setField("abstract", abs);
+			result.setField("abstract", abs);
 		}
 
 		int index;
@@ -161,8 +161,12 @@ public class ACM extends Search {
 			index = note.indexOf(" Full text:");
 			if (index > 0)
 				note = note.substring(0, index);
-			res.setField("note", note);
+			result.setField("note", note);
 		}
+	}
+	
+	public boolean isParseable(URL site) {
+		return site.getHost().contains("dl.acm.org");
 	}
 
 }

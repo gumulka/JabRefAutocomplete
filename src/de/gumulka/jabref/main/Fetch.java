@@ -1,7 +1,13 @@
 package de.gumulka.jabref.main;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,10 +26,7 @@ import net.sf.jabref.external.PushToApplication;
 import net.sf.jabref.plugin.core.JabRefPlugin;
 import de.gumulka.jabref.controller.Settingscontroller;
 import de.gumulka.jabref.model.Result;
-import de.gumulka.jabref.online.ACM;
-import de.gumulka.jabref.online.IEEE;
 import de.gumulka.jabref.online.Search;
-import de.gumulka.jabref.online.SpringerLink;
 import de.gumulka.jabref.view.Resultview;
 import de.gumulka.jabref.view.Settingspanel;
 
@@ -38,20 +41,28 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 	private Settingscontroller sc;
 	private JFrame waiting;
 	private JFrame result;
+	private static boolean init = false;
 
 	private List<Result> results = new LinkedList<Result>();
 
 	public Fetch() {
 		sp = new Settingspanel();
 		sc = new Settingscontroller(sp);
+		if(!init)
+		try {
+			initclasses("de.gumulka.jabref.websites");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		init = true;
 	}
-
+	
 	public String getName() {
-		return "Push to JabRef Autocomplete";
+		return "Push to Autocomplete";
 	}
 
 	public String getApplicationName() {
-		return "JabRef Autocomplete";
+		return "Autocomplete";
 	}
 
 	public String getTooltip() {
@@ -64,10 +75,11 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 	}
 
 	public String getKeyStrokeName() {
-		return "Push to JabRef Autocomplete";
+		return "Push to Autocomplete";
 	}
 
 	public JPanel getSettingsPanel() {
+		sp.refresh();
 		return sp;
 	}
 
@@ -87,26 +99,15 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 		for (BibtexEntry e : entrys) {
 			System.out.println("Searching for: \nAuthor: "
 					+ e.getField("author") + "\nTitle: " + e.getField("title"));
-			Search acm = new ACM(e);
-			acm.search();
-			Search springer = new SpringerLink(e);
-			springer.search();
-			Search ieee = new IEEE(e);
-			ieee.search();
-			Result res = ieee.getResult();
-			if (res != null)
-				results.add(res);
-			res = acm.getResult();
-			if (res != null)
-				results.add(res);
-			res = springer.getResult();
-			if (res != null)
-				results.add(res);
+			Search s = new Search();
+			s.search(e);
+			BibtexEntry res = s.getResult();
+			if(res != null)
+				results.add(new Result(e,res));
 		}
 	}
 
 	public void operationCompleted(BasePanel panel) {
-		waiting.setVisible(false);
 		result = new JFrame("Results");
 		result.setLocationRelativeTo(panel);
 		if (results.size() > 0) {
@@ -122,12 +123,46 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			result.setSize(500, 200);
 			result.add(new JLabel("There are no results."));
 		}
+		waiting.setVisible(false);
 		result.setVisible(true);
 		results.clear();
 	}
 
 	public boolean requiresBibtexKeys() {
 		return false;
+	}
+
+	private void initclasses(String packagename) throws Exception {
+
+		String resPath = this.getClass().getProtectionDomain().getCodeSource()
+				.getLocation().getPath();
+		String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar")
+				.replaceFirst("file:", "");
+		JarFile jarFile;
+		try {
+			jarFile = new JarFile(jarPath);
+			Enumeration<JarEntry> e = jarFile.entries();
+
+			URL[] urls = { new URL("jar:file:" + jarPath + "!/") };
+			@SuppressWarnings("resource")
+			URLClassLoader cl = new URLClassLoader(urls, this.getClass().getClassLoader());
+			Class<?> c;
+			while (e.hasMoreElements()) {
+				JarEntry je = (JarEntry) e.nextElement();
+				if (je.isDirectory() || !je.getName().endsWith(".class")) {
+					continue;
+				}
+				// -6 because of .class
+				String className = je.getName().substring(0,
+						je.getName().length() - 6);
+				className = className.replace('/', '.');
+				if (!className.startsWith(packagename))
+					continue;
+				c = cl.loadClass(className);
+				c.newInstance();
+			}
+		} catch (IOException e) {
+		}
 	}
 
 }

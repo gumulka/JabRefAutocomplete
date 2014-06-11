@@ -1,9 +1,10 @@
 /**
  * 
  */
-package de.gumulka.jabref.online;
+package de.gumulka.jabref.websites;
 
 import java.io.IOException;
+import java.net.URL;
 
 import net.sf.jabref.BibtexEntry;
 import net.sf.jabref.imports.BibtexParser;
@@ -15,7 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import de.gumulka.jabref.model.Result;
+import de.gumulka.jabref.online.Search;
 
 /**
  * @author Fabian Pflug
@@ -23,10 +24,9 @@ import de.gumulka.jabref.model.Result;
  */
 public class IEEE extends Search {
 
-	public IEEE(BibtexEntry e) {
-		super(e);
+	public IEEE(){
+		super("IEEE");
 	}
-	
 	
 	public void run() {
 		try {
@@ -48,6 +48,7 @@ public class IEEE extends Search {
 				query += "AND ";
 			
 			tmp = entry.getField("title");
+			tmp = formatTitle(tmp);
 			if (tmp != null) {
 				query += "\"Document Title\":" + tmp;
 			}
@@ -60,7 +61,7 @@ public class IEEE extends Search {
 			
 			Elements links = doc.select("a[href*=articleDetails.jsp]");
 			if(links.size()==2)
-				result = extract(entry, "http://ieeexplore.ieee.org" + links.first().attr("href"));
+				result = extract("http://ieeexplore.ieee.org" + links.first().attr("href"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -68,7 +69,7 @@ public class IEEE extends Search {
 
 	}
 
-	public static Result extract(BibtexEntry entry, String url) {
+	public BibtexEntry extract(String url) {
 		try {
 			Connection con = Jsoup.connect("http://ieeexplore.ieee.org/xpl/downloadCitations");
 			String id = url.substring(url.indexOf("arnumber=")+9);
@@ -80,15 +81,16 @@ public class IEEE extends Search {
 			con.data("download-format", "download-bibtex");
 			con.method(Method.POST);
 			Response res = con.execute();
-			BibtexEntry second = BibtexParser.singleFromString(res.body().replace("<br>", ""));
-			if(second == null)
-				return null;
-			Result result = new Result(entry, second);
-			return result;
+			return BibtexParser.singleFromString(res.body().replace("<br>", ""));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	
+	public boolean isParseable(URL site) {
+		return site.getHost().contains("ieeexplore.ieee.org");
 	}
 
 }
