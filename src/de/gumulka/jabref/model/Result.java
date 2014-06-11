@@ -21,7 +21,8 @@ public class Result {
 		public Result(BibtexEntry old, BibtexEntry found){
 			this.entry = old;
 			this.second = found;
-			second.setField("bibtexkey", entry.getField("bibtexkey"));
+			if(entry.getField("bibtexkey") != null)
+				second.setField("bibtexkey", entry.getField("bibtexkey"));
 		}
 
 		public BibtexEntryType getType() {

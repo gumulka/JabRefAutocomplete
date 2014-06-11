@@ -21,6 +21,7 @@ import net.sf.jabref.plugin.core.JabRefPlugin;
 import de.gumulka.jabref.controller.Settingscontroller;
 import de.gumulka.jabref.model.Result;
 import de.gumulka.jabref.online.ACM;
+import de.gumulka.jabref.online.IEEE;
 import de.gumulka.jabref.online.Search;
 import de.gumulka.jabref.online.SpringerLink;
 import de.gumulka.jabref.view.Resultview;
@@ -90,7 +91,12 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			acm.search();
 			Search springer = new SpringerLink(e);
 			springer.search();
-			Result res = acm.getResult();
+			Search ieee = new IEEE(e);
+			ieee.search();
+			Result res = ieee.getResult();
+			if (res != null)
+				results.add(res);
+			res = acm.getResult();
 			if (res != null)
 				results.add(res);
 			res = springer.getResult();

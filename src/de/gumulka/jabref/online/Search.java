@@ -25,6 +25,7 @@ public class Search extends Thread {
 
 
 	protected static String formatAuthors(String authors) {
+		authors.replace("AND", "and");
 		String[] splittet = authors.split(" and ");
 		String ret = "";
 		int index;
@@ -35,8 +36,10 @@ public class Search extends Thread {
 				String Nachname = s.substring(0, index).trim();
 				ret += '"' + Vorname + " " + Nachname + "\" ";
 			}
+			else
+				ret += '"' + s + "\" ";
 		}
-		return ret;
+		return ret.trim();
 	}
 	
 	public Result getResult() {

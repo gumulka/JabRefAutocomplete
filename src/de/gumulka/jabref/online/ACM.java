@@ -122,6 +122,7 @@ public class ACM extends Search {
 			Document doc = con.get();
 			String bibtex = doc.select("PRE").first().text();
 			BibtexEntry second = BibtexParser.singleFromString(bibtex);
+			if(second == null) return null;
 			Result res = new Result(entry, second);
 			extractWebInfo(url, res);
 			return res;

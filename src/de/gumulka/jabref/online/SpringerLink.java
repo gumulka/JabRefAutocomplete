@@ -73,6 +73,7 @@ public class SpringerLink extends Search {
 
 			
 			BibtexEntry second = BibtexParser.singleFromString(res.body());
+			if(second == null) return null;
 			Result result = new Result(entry, second);
 			extractWebInfo(url, result);
 			return result;

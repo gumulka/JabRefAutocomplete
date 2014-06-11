@@ -53,9 +53,9 @@ public class Resultview extends JPanel {
 			c.gridx = 0;
 			this.add(new JLabel("TYPE"),c);
 			c.gridx = 1;
-			this.add(new JTextArea(result.getType().toString()),c);
+			this.add(new JTextArea(result.getType().getName()),c);
 			c.gridx = 2;
-			this.add(new JTextArea(result.getType().toString()),c);
+			this.add(new JTextArea(result.getType().getName()),c);
 			c.gridx = 3;
 			JButton confirm = new JButton("change Type");
 			confirm.setActionCommand("TYPECHANGE");
