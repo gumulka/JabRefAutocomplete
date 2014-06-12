@@ -9,7 +9,7 @@ import javax.swing.Box;
 import javax.swing.JFrame;
 
 /**
- * @author gumulka
+ * @author Fabian Pflug
  *
  */
 public class MyBox extends Box {

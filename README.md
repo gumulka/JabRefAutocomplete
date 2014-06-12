@@ -1,6 +1,6 @@
-## WARNING
+## INFORMATION
 
-This is a very early development status. Also it works as a proof of concept, there are non 
+This is a early development status. Also it works as a proof of concept, there are non 
 functioning buttons, and it does not find all papers, even if they are listed on the sites.
 
 ## What it is:
@@ -10,6 +10,7 @@ At the moment these sites are implementet:
 - ACM
 - SpringerLink
 - IEEE
+- DBLP
 
 ## Install
 
@@ -17,11 +18,18 @@ Download the [JabRefAutocomplete.jar](https://github.com/gumulka/JabRefAutocompl
 
 ## Use
 
-Select one or more BibTex entrys where you wish to have more information and click the Autocomplete button.
+Select one or more BibTex entrys where you wish to have more information and click the autocomplete button.
 
-at the moment it works best, if you have a doi spezified, otherwise it needs a title.
-If Authors are filled out, the results can get better.
-This may change in future versions.
+At the moment it works best, if you have a DOI spezified, otherwise it needs the title of the paper.
+If authors are filled out, the results can get better.
+
+If you rightclick on the plugin button, you get a settings window, where you can specify some 
+additional settings, like which library to use and if field should be automatically filled out 
+if new information are available. The tool does not overwrite your entrys without your 
+permission.
+
+It would be appreciatet if you enable "Send Debug information to developer" to help me improve 
+the search.
 
 ## Links
 
@@ -37,7 +45,6 @@ I only know about the websites, where papers are published I read. So if there a
 
 Planned:
 - CiteSeer
-- DBLP
 - ScienceDirect
 - arXiv.org
 - oxfordjournals.org
