@@ -1,15 +1,6 @@
 
 add a "cancel" and a "copy all" Button to the result page.
 
-make a setting to automatically fill up not filled fields.
-
-remove a field from the result page if it is copied. (also for complete BibTex Entrys) 
-
 let the user make changes to the result and copy these changes into the new field.
 
-Class Fetch gets initialized two times, make it one.
-
-Make Parsing for Springer, IEEE, DBLP and Citeseer
-Login into Springer and ACM - Store Login info
-
-Include a Settings Panel and Store to a file
+Make Parsing for DBLP and Citeseer

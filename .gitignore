@@ -1,3 +1,7 @@
 *.class
 lib/
 src/de/gumulka/jabref/test/
+online/
+test.html
+test.bib
+test.bib.bak

@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.gumulka.jabref.main.Log;
 import de.gumulka.jabref.online.Search;
 
 /**
@@ -38,7 +39,6 @@ public class SpringerLink extends Search {
 				tmp = "";
 			tmp = formatTitle(tmp);
 			con.data("dc.title", tmp);
-			
 			tmp = entry.getField("author");
 			if (tmp != null) {
 				tmp = formatAuthors(tmp);
@@ -49,17 +49,15 @@ public class SpringerLink extends Search {
 			con.timeout(10000);
 			
 			Document doc = con.get();
-			
+
 			Element list = doc.select("ol[id=results-list]").first();
 			if(list == null) return;
 			Elements links = list.select("a[class=title]");
 			if(links.size()==1)
 				result = extract("http://link.springer.com" + links.first().attr("href"));
-			if(result != null)
-				extractWebInfo("http://link.springer.com" + links.first().attr("href"));
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 
 	}
@@ -72,15 +70,18 @@ public class SpringerLink extends Search {
 			con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
 			con.timeout(10000);
 			Response res = con.execute();
-			return BibtexParser.singleFromString(res.body());
+			BibtexEntry bib = BibtexParser.singleFromString(res.body());
+			if(bib != null)
+				extractWebInfo(url, bib);
+			return bib;
 		} catch (Exception e) {
+			Log.error(e, "Error extracting the url: " + url);
 		}
 		return null;
 	}
 
-	private void extractWebInfo(String url)
-			throws IOException {
-
+	private void extractWebInfo(String url, BibtexEntry bib) {
+		try {
 		Connection con = Jsoup.connect(url);
 		con.userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0");
 		con.timeout(10000);
@@ -90,12 +91,15 @@ public class SpringerLink extends Search {
 		Element abstractel = doc.select("div[class=abstract-content formatted]").last();
 		if (abstractel != null) {
 			String abs = abstractel.text();
-			result.setField("abstract", abs);
+			bib.setField("abstract", abs);
 		}
 
 		Element noteel = doc.select("div[class=article-note").last();
 		if (noteel != null) {
-			result.setField("note", noteel.text());
+			bib.setField("note", noteel.text());
+		}
+		} catch (Exception e) {
+			Log.error(e, "Error extracting webinfo from the url: " + url);
 		}
 	}
 	

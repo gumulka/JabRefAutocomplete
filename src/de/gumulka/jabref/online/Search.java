@@ -13,6 +13,9 @@ import net.sf.jabref.BibtexEntry;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
+import de.gumulka.jabref.main.Log;
+import de.gumulka.jabref.model.Settings;
+
 /**
  * @author Fabian Pflug
  * 
@@ -43,12 +46,6 @@ public class Search extends Thread {
 		return name;
 	}
 	
-	public static void printall() {
-		for (Search s : all) {
-			System.out.println(s.name);
-		}
-	}
-
 	public void search(BibtexEntry bib) {
 		this.entry = bib;
 		start();
@@ -59,12 +56,11 @@ public class Search extends Thread {
 		if (doi == null) {
 			List<Search> second = new LinkedList<Search>();
 			for (Search s : all) {
+				if(Settings.getInstance().isSet(s.getSearchName()))
 				try {
 					second.add(s.getClass().newInstance());
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					Log.error(e);
 				}
 			}
 			for (Search s : second) {
@@ -94,7 +90,7 @@ public class Search extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 	}
@@ -102,13 +98,44 @@ public class Search extends Thread {
 	public BibtexEntry extract(String url) {
 		return null;
 	}
+	
+	protected static String clean(String toClean) {
+		String s = toClean.replaceAll("é", "e");
+		s = s.replaceAll("ô", "o");
+		s = s.replaceAll(":", " ");
+		s = s.replaceAll("\\?", " ");
+		s = s.replaceAll("\\.", " ");
+		s = s.replaceAll("-", " ");
+
+		return s;
+	}
 
 	protected static String formatAuthors(String authors) {
-		authors.replaceAll("AND", "and");
+		authors = clean(authors);
+		authors = authors.replaceAll("AND", "and");
 		String[] splittet = authors.split(" and ");
+		List<String> ultimateSplit = new LinkedList<String>();
+		for(String s : splittet) {
+			if(s.lastIndexOf(',') != s.indexOf(',')) { // splittet using ',' because there is more then one.
+				for(String n : s.split(","))
+					ultimateSplit.add(n);
+			} else { // now comes the scary part.
+				s = s.trim();
+				if(s.lastIndexOf(' ') != s.indexOf(' ')) // if there is more then one space, assume it is two names.
+					for(String n : s.split(" "))
+						ultimateSplit.add(n);
+				else
+					ultimateSplit.add(s);
+			}
+		}
 		String ret = "";
 		int index;
-		for (String s : splittet) {
+		for (String s : ultimateSplit) {
+			s=s.trim();
+			if(s.equalsIgnoreCase("et al"))
+				continue;
+			if(s.length()<2)
+				continue;
 			index = s.indexOf(',');
 			if (index > 0) {
 				String Vorname = s.substring(index + 1).trim();
@@ -121,7 +148,7 @@ public class Search extends Thread {
 	}
 
 	protected static String formatTitle(String title) {
-		String ret = title.replaceAll(":", "");
+		String ret = clean(title);
 
 		return ret.trim();
 	}
@@ -134,7 +161,7 @@ public class Search extends Thread {
 		try {
 			join();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return result;
 	}

@@ -1,5 +1,7 @@
 package de.gumulka.jabref.main;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,10 +11,10 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,9 +26,16 @@ import net.sf.jabref.BibtexEntry;
 import net.sf.jabref.MetaData;
 import net.sf.jabref.external.PushToApplication;
 import net.sf.jabref.plugin.core.JabRefPlugin;
+
+import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
+import org.jsoup.Jsoup;
+
 import de.gumulka.jabref.controller.Settingscontroller;
 import de.gumulka.jabref.model.Result;
+import de.gumulka.jabref.model.Settings;
 import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.view.MyBox;
 import de.gumulka.jabref.view.Resultview;
 import de.gumulka.jabref.view.Settingspanel;
 
@@ -52,7 +61,7 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 		try {
 			initclasses("de.gumulka.jabref.websites");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		init = true;
 	}
@@ -97,12 +106,25 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 				+ " publications.\n Please wait."));
 		waiting.setVisible(true);
 		for (BibtexEntry e : entrys) {
-			System.out.println("Searching for: \nAuthor: "
-					+ e.getField("author") + "\nTitle: " + e.getField("title"));
+			Log.debug("Searching for: \nAuthor: "
+					+ e.getField("author") + "\nTitle: " + e.getField("title")
+					+ "\nDoi: " + e.getField("doi"));
 			Search s = new Search();
 			s.search(e);
 			BibtexEntry res = s.getResult();
-			if(res != null)
+			if(res==null && Settings.getInstance().isSendDebug()) {
+				try {
+					Connection con = Jsoup.connect("http://www.jabref.gummu.de/debug.php").method(Method.POST);
+					con.data("author", "" + e.getField("author"));
+					con.data("title","" + e.getField("title"));
+					con.data("doi","" + e.getField("doi"));
+					con.execute();
+				} catch (Exception ex) {
+					// we don't want to handle this.
+				}
+			}
+			Result tmp = new Result(e,res);
+			if(tmp.hasNewInformation())	
 				results.add(new Result(e,res));
 		}
 	}
@@ -112,18 +134,27 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 		result.setLocationRelativeTo(panel);
 		if (results.size() > 0) {
 			result.setSize(1000, 500);
-			Box temp = new Box(BoxLayout.Y_AXIS);
+			MyBox temp = new MyBox(BoxLayout.Y_AXIS, result);
 			temp.add(new JLabel("Results:"));
 			for (Result r : results) {
-				temp.add(new Resultview(r));
+				temp.add(new Resultview(r, temp));
 			}
 			JScrollPane sp = new JScrollPane(temp);
 			result.add(sp);
 		} else {
 			result.setSize(500, 200);
 			result.add(new JLabel("There are no results."));
+			JButton button = new JButton("OK");
+			button.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e)
+	            {
+	            	result.dispose();
+	            }
+	        });      
+			result.add(button);
 		}
 		waiting.setVisible(false);
+		waiting.dispose();
 		result.setVisible(true);
 		results.clear();
 	}
@@ -162,6 +193,7 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 				c.newInstance();
 			}
 		} catch (IOException e) {
+			Log.error(e);
 		}
 	}
 

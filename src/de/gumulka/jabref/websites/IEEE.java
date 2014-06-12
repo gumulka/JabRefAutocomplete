@@ -16,6 +16,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import de.gumulka.jabref.main.Log;
 import de.gumulka.jabref.online.Search;
 
 /**
@@ -64,7 +65,7 @@ public class IEEE extends Search {
 				result = extract("http://ieeexplore.ieee.org" + links.first().attr("href"));
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 
 	}
@@ -83,7 +84,7 @@ public class IEEE extends Search {
 			Response res = con.execute();
 			return BibtexParser.singleFromString(res.body().replace("<br>", ""));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e, "Error extracting the url: " + url);
 		}
 		return null;
 	}

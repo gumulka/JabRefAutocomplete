@@ -16,7 +16,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import de.gumulka.jabref.main.Log;
 import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.test.htmlwriter;
 
 /**
  * @author Fabian Pflug
@@ -54,14 +56,20 @@ public class ACM extends Search {
 			if (tmp == null)
 				tmp = "";
 			tmp = formatTitle(tmp);
+			Log.debug("Title (formattet): " + tmp);
 			con.data("allofem", tmp);
 			con.data("anyofem", "");
 			con.data("noneofem", "");
-			con.data("peoplezone", "Author");
 			tmp = entry.getField("author");
-			if (tmp == null)
+			if (tmp == null) {
 				tmp = "";
-			con.data("people", formatAuthors(tmp));
+				con.data("peoplezone", "[any field]");
+			} else {
+				con.data("peoplezone", "Author");
+				tmp = formatAuthors(tmp);
+				Log.debug("Authornames: " + tmp);
+			}
+			con.data("people", tmp);
 			con.data("peoplehow", "and");
 			con.data("keyword", "");
 			con.data("keywordhow", "AND");
@@ -92,18 +100,17 @@ public class ACM extends Search {
 			res = con.execute();
 
 			doc = res.parse();
+			htmlwriter.write(doc.html());
 			if (doc.select("p:contains(Found)").first().text()
 					.contains("Found 1 within")) {
 				String url = "http://dl.acm.org/"
 						+ doc.select("a[href*=citation.cfm").first()
 								.attr("href") + "&preflayout=flat";
 				result = extract(url);
-				if(result!=null)
-					extractWebInfo(url);
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 
 	}
@@ -125,14 +132,18 @@ public class ACM extends Search {
 			con.referrer("about:blank");
 			Document doc = con.get();
 			String bibtex = doc.select("PRE").first().text();
-			return BibtexParser.singleFromString(bibtex);
+			BibtexEntry bib = BibtexParser.singleFromString(bibtex);
+			if(bib!=null)
+				extractWebInfo(url, bib);
+			return bib;
 		} catch (IOException e) {
+			Log.error(e, "Error extracting the url: " + url);
 		}
 		return null;
 	}
 
-	private void extractWebInfo(String url)
-			throws IOException {
+	private void extractWebInfo(String url, BibtexEntry bib) {
+		try {
 		if (!url.contains("&preflayout=flat"))
 			url += "&preflayout=flat";
 		Connection con = Jsoup.connect(url);
@@ -144,7 +155,7 @@ public class ACM extends Search {
 				.select("div[style=display:inline]").first();
 		if (abstractel != null) {
 			String abs = abstractel.text();
-			result.setField("abstract", abs);
+			bib.setField("abstract", abs);
 		}
 
 		int index;
@@ -161,8 +172,11 @@ public class ACM extends Search {
 			index = note.indexOf(" Full text:");
 			if (index > 0)
 				note = note.substring(0, index);
-			result.setField("note", note);
+			bib.setField("note", note);
 		}
+			} catch (Exception e) {
+				Log.error(e, "Error extracting webinfo from the url: " + url);
+			}
 	}
 	
 	public boolean isParseable(URL site) {

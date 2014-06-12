@@ -15,6 +15,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.gumulka.jabref.main.Log;
+
 /**
  * @author Fabian Pflug
  * 
@@ -56,8 +58,8 @@ public class Settings implements Serializable {
 					@SuppressWarnings("resource")
 					ObjectInputStream o = new ObjectInputStream( fis );
 					instance = (Settings) o.readObject();
-				}catch ( IOException e ) { System.err.println( e ); }
-				catch ( ClassNotFoundException e ) { System.err.println( e ); }	
+				}catch ( IOException e ) { Log.error( e ); }
+				catch ( ClassNotFoundException e ) { Log.error( e ); }	
 				finally { try { fis.close(); } catch ( Exception e ) { } }
 			}
 		}
@@ -83,12 +85,12 @@ public class Settings implements Serializable {
 			ObjectOutputStream o = new ObjectOutputStream(fos);
 			o.writeObject(this);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		} finally {
 			try {
 				fos.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);;
 			}
 		}
 	}

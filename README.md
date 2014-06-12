@@ -6,6 +6,10 @@ functioning buttons, and it does not find all papers, even if they are listed on
 ## What it is:
 
 Autocomplete is a plugin for JabRef, which trys to autocomplete the entrys in your database using information provided by ACM, SpringerLink, IEEE, DBLP, CiteSeer and others.
+At the moment these sites are implementet:
+- ACM
+- SpringerLink
+- IEEE
 
 ## Install
 
@@ -14,6 +18,10 @@ Download the [JabRefAutocomplete.jar](https://github.com/gumulka/JabRefAutocompl
 ## Use
 
 Select one or more BibTex entrys where you wish to have more information and click the Autocomplete button.
+
+at the moment it works best, if you have a doi spezified, otherwise it needs a title.
+If Authors are filled out, the results can get better.
+This may change in future versions.
 
 ## Links
 
