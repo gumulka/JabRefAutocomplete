@@ -1,6 +1,12 @@
 
 add a "cancel" and a "copy all" Button to the result page.
 
-let the user make changes to the result and copy these changes into the new field.
+Do somethig if two or more results are found. At the moment only the last is considerd.
 
-Make Parsing for DBLP and Citeseer
+Make Parsing for Citeseer
+
+improve the final view
+
+get more training entrys.
+
+write doc! Lots and lots of doc

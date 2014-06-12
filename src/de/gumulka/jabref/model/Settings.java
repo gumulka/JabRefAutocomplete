@@ -30,13 +30,17 @@ public class Settings implements Serializable {
 	private static Settings instance;
 	private static String filename;
 
+	public final static double version = 0.1;
+	
 	private Map<String,Boolean> searchSites;
 	private boolean autocopy;
 	private boolean sendDebug;
+	private boolean checkVersion;
 
 	private Settings() {
 		setAutocopy(false);
 		setSendDebug(false);
+		this.setCheckVersion(false);
 		searchSites = new HashMap<String,Boolean>();
 	}
 
@@ -109,6 +113,14 @@ public class Settings implements Serializable {
 
 	public void setSendDebug(boolean sendDebug) {
 		this.sendDebug = sendDebug;
+	}
+
+	public boolean isCheckVersion() {
+		return checkVersion;
+	}
+
+	public void setCheckVersion(boolean checkVersion) {
+		this.checkVersion = checkVersion;
 	}
 
 }

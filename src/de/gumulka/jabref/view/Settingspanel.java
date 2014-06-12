@@ -23,7 +23,7 @@ public class Settingspanel extends JPanel {
 
 	private Settings set = Settings.getInstance();
 	
-	private JCheckBox debug, autofill;
+	private JCheckBox debug, autofill, version;
 	
 	private List<JCheckBox> sites = new LinkedList<JCheckBox>(); 
 	
@@ -49,6 +49,11 @@ public class Settingspanel extends JPanel {
 		autofill = new JCheckBox();
 		autofill.setText("Automatically fill empty fields");
 		this.add(autofill,c);
+		
+		c.gridy++;
+		version = new JCheckBox();
+		version.setText("Check for new Versions");
+		this.add(version,c);
 
 		c.gridy++;
 		this.add(new JLabel("Search this sites:"), c);
@@ -81,9 +86,14 @@ public class Settingspanel extends JPanel {
 		return debug.isSelected();
 	}
 	
+	public boolean isCheckVersion() {
+		return version.isSelected();
+	}
+	
 	public void refresh () {
 		debug.setSelected(set.isSendDebug());
-		autofill.setSelected(set.isAutocopy());		
+		autofill.setSelected(set.isAutocopy());
+		version.setSelected(set.isCheckVersion());		
 		for(JCheckBox box : sites) {
 			box.setSelected(set.isSet(box.getText()));
 		}

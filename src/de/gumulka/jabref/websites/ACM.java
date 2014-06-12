@@ -56,7 +56,6 @@ public class ACM extends Search {
 			if (tmp == null)
 				tmp = "";
 			tmp = formatTitle(tmp);
-			Log.debug("Title (formattet): " + tmp);
 			con.data("allofem", tmp);
 			con.data("anyofem", "");
 			con.data("noneofem", "");
@@ -67,7 +66,6 @@ public class ACM extends Search {
 			} else {
 				con.data("peoplezone", "Author");
 				tmp = formatAuthors(tmp);
-				Log.debug("Authornames: " + tmp);
 			}
 			con.data("people", tmp);
 			con.data("peoplehow", "and");

@@ -99,58 +99,73 @@ public class Search extends Thread {
 		return null;
 	}
 	
-	protected static String clean(String toClean) {
+	public static String clean(String toClean) {
 		String s = toClean.replaceAll("é", "e");
 		s = s.replaceAll("ô", "o");
+		s = s.replaceAll("ó", "o");
+		s = s.replaceAll("á", "a");
+		s = s.replaceAll("ä", "a");
+		s = s.replaceAll("ö", "o");
+		s = s.replaceAll("ü", "u");
 		s = s.replaceAll(":", " ");
 		s = s.replaceAll("\\?", " ");
 		s = s.replaceAll("\\.", " ");
 		s = s.replaceAll("-", " ");
+		s = s.replaceAll(",", " ");
+		s = s.replaceAll("'", " ");
+		s = s.replaceAll("\"", " ");
 
-		return s;
+		return s.trim();
 	}
-
-	protected static String formatAuthors(String authors) {
-		authors = clean(authors);
-		authors = authors.replaceAll("AND", "and");
-		String[] splittet = authors.split(" and ");
-		List<String> ultimateSplit = new LinkedList<String>();
-		for(String s : splittet) {
-			if(s.lastIndexOf(',') != s.indexOf(',')) { // splittet using ',' because there is more then one.
-				for(String n : s.split(","))
-					ultimateSplit.add(n);
-			} else { // now comes the scary part.
-				s = s.trim();
-				if(s.lastIndexOf(' ') != s.indexOf(' ')) // if there is more then one space, assume it is two names.
-					for(String n : s.split(" "))
-						ultimateSplit.add(n);
-				else
-					ultimateSplit.add(s);
+	
+	private static String formatAuthorsRec(String authors) {
+		String s= authors.trim();
+		
+		if(s.contains(" and ")) {
+			String ret = "";
+			for(String a : s.split(" and "))  {
+				ret += formatAuthorsRec(a);
 			}
+			return ret;
 		}
-		String ret = "";
-		int index;
-		for (String s : ultimateSplit) {
-			s=s.trim();
-			if(s.equalsIgnoreCase("et al"))
-				continue;
-			if(s.length()<2)
-				continue;
-			index = s.indexOf(',');
-			if (index > 0) {
-				String Vorname = s.substring(index + 1).trim();
-				String Nachname = s.substring(0, index).trim();
-				ret += '"' + Vorname + " " + Nachname + "\" ";
-			} else
-				ret += '"' + s + "\" ";
+		if(s.contains(";")) {
+			String ret = "";
+			for(String a : s.split(";"))  {
+				ret += formatAuthorsRec(a);
+			}
+			return ret;
 		}
-		return ret.trim();
+		
+		if(s.equalsIgnoreCase("et al"))
+			return "";
+		if(s.length()<2)
+			return "";
+		int indexK = s.indexOf(',');
+		int indexS = s.indexOf(' ');
+		if (indexK >0 && indexK< indexS+2) {
+			String Vorname = s.substring(indexK + 1).trim();				
+			String Nachname = s.substring(0, indexK).trim();
+			if(Vorname.length()<2)
+				return '"' + Nachname + "\" ";
+			return '"' + Vorname + " " + Nachname + "\" ";
+		} else if(indexK>0 && indexK>indexS+2 ){
+			String ret = "";
+			for(String a : s.split(","))  {
+				ret += formatAuthorsRec(a);
+			}
+			return ret;			
+		} else
+			return '"' + s + "\" ";
 	}
 
-	protected static String formatTitle(String title) {
-		String ret = clean(title);
+	public static String formatAuthors(String authors) {
+		authors = authors.replaceAll("AND", "and");
+		authors = formatAuthorsRec(authors);
+		return clean(authors);
+	}
 
-		return ret.trim();
+	public static String formatTitle(String title) {
+		return clean(title);
 	}
 	
 	public boolean isParseable(URL site) {

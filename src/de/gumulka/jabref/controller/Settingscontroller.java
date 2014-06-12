@@ -23,6 +23,7 @@ public class Settingscontroller {
 	public void store(){
 		set.setAutocopy(sp.isAutocopy());
 		set.setSendDebug(sp.isSendDebug());
+		set.setCheckVersion(sp.isCheckVersion());
 		for(Search s: Search.getAllSites()) {
 			set.setSite(s.getSearchName(), sp.isSet(s.getSearchName()));
 		}

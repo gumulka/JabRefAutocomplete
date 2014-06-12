@@ -57,15 +57,23 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 	public Fetch() {
 		sp = new Settingspanel();
 		sc = new Settingscontroller(sp);
-		if(!init)
-		try {
-			initclasses("de.gumulka.jabref.websites");
-		} catch (Exception e) {
-			Log.error(e);
+		if (!init) {
+			try {
+				if (Settings.getInstance().isCheckVersion()) {
+					new VersionCheck().start();
+				}
+			} catch (Exception e) {
+				Log.error(e);
+			}
+			try {
+				initclasses("de.gumulka.jabref.websites");
+			} catch (Exception e) {
+				Log.error(e);
+			}
 		}
 		init = true;
 	}
-	
+
 	public String getName() {
 		return "Push to Autocomplete";
 	}
@@ -106,26 +114,28 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 				+ " publications.\n Please wait."));
 		waiting.setVisible(true);
 		for (BibtexEntry e : entrys) {
-			Log.debug("Searching for: \nAuthor: "
-					+ e.getField("author") + "\nTitle: " + e.getField("title")
-					+ "\nDoi: " + e.getField("doi"));
+			Log.debug("Searching for: \nAuthor: " + e.getField("author")
+					+ "\nTitle: " + e.getField("title") + "\nDoi: "
+					+ e.getField("doi"));
 			Search s = new Search();
 			s.search(e);
 			BibtexEntry res = s.getResult();
-			if(res==null && Settings.getInstance().isSendDebug()) {
+			if (res == null && Settings.getInstance().isSendDebug()) {
 				try {
-					Connection con = Jsoup.connect("http://www.jabref.gummu.de/debug.php").method(Method.POST);
+					Connection con = Jsoup.connect(
+							"http://www.jabref.gummu.de/debug.php").method(
+							Method.POST);
 					con.data("author", "" + e.getField("author"));
-					con.data("title","" + e.getField("title"));
-					con.data("doi","" + e.getField("doi"));
+					con.data("title", "" + e.getField("title"));
+					con.data("doi", "" + e.getField("doi"));
 					con.execute();
 				} catch (Exception ex) {
 					// we don't want to handle this.
 				}
 			}
-			Result tmp = new Result(e,res);
-			if(tmp.hasNewInformation())	
-				results.add(new Result(e,res));
+			Result tmp = new Result(e, res);
+			if (tmp.hasNewInformation())
+				results.add(new Result(e, res));
 		}
 	}
 
@@ -146,11 +156,10 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			result.add(new JLabel("There are no results."));
 			JButton button = new JButton("OK");
 			button.addActionListener(new ActionListener() {
-	            public void actionPerformed(ActionEvent e)
-	            {
-	            	result.dispose();
-	            }
-	        });      
+				public void actionPerformed(ActionEvent e) {
+					result.dispose();
+				}
+			});
 			result.add(button);
 		}
 		waiting.setVisible(false);
@@ -176,7 +185,8 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 
 			URL[] urls = { new URL("jar:file:" + jarPath + "!/") };
 			@SuppressWarnings("resource")
-			URLClassLoader cl = new URLClassLoader(urls, this.getClass().getClassLoader());
+			URLClassLoader cl = new URLClassLoader(urls, this.getClass()
+					.getClassLoader());
 			Class<?> c;
 			while (e.hasMoreElements()) {
 				JarEntry je = (JarEntry) e.nextElement();
