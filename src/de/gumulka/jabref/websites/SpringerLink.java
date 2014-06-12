@@ -26,7 +26,7 @@ import de.gumulka.jabref.online.Search;
 public class SpringerLink extends Search {
 
 	public SpringerLink() {
-		super("SpringerLink");
+		super(SpringerLink.class.getSimpleName());
 	}
 	
 	public void run() {

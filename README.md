@@ -11,6 +11,8 @@ At the moment these sites are implementet:
 - SpringerLink
 - IEEE
 - DBLP
+- CiteSeer
+- ScienceDirect
 
 ## Install
 
@@ -44,7 +46,5 @@ Autocomplete uses this great library:
 I only know about the websites, where papers are published I read. So if there are some sites, you think should be included in this tool, feel free to [mail](mailto:jabrefautocomplete@gummu.de) me with a link to an example paper on this site.
 
 Planned:
-- CiteSeer
-- ScienceDirect
 - arXiv.org
 - oxfordjournals.org

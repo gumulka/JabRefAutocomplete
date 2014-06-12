@@ -24,7 +24,7 @@ import de.gumulka.jabref.online.Search;
 public class DBLP extends Search {
 
 	public DBLP(){
-		super("DBLP");
+		super(DBLP.class.getSimpleName());
 	}
 	
 	public void run() {

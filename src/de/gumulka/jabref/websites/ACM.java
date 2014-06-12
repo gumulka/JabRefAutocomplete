@@ -27,7 +27,7 @@ import de.gumulka.jabref.test.htmlwriter;
 public class ACM extends Search {
 
 	public ACM() {
-		super("ACM");
+		super(ACM.class.getSimpleName());
 	}
 
 	public void run() {

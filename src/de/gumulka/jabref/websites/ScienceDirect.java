@@ -29,7 +29,7 @@ import de.gumulka.jabref.test.htmlwriter;
 public class ScienceDirect extends Search {
 
 	public ScienceDirect(){
-		super("sciencedirect");
+		super(ScienceDirect.class.getSimpleName());
 	}
 	
 	public void run() {

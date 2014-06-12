@@ -26,7 +26,7 @@ import de.gumulka.jabref.online.Search;
 public class IEEE extends Search {
 
 	public IEEE(){
-		super("IEEE");
+		super(IEEE.class.getSimpleName());
 	}
 	
 	public void run() {
