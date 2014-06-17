@@ -26,11 +26,6 @@ import net.sf.jabref.BibtexEntry;
 import net.sf.jabref.MetaData;
 import net.sf.jabref.external.PushToApplication;
 import net.sf.jabref.plugin.core.JabRefPlugin;
-
-import org.jsoup.Connection;
-import org.jsoup.Connection.Method;
-import org.jsoup.Jsoup;
-
 import de.gumulka.jabref.controller.Settingscontroller;
 import de.gumulka.jabref.model.Result;
 import de.gumulka.jabref.model.Settings;
@@ -117,25 +112,12 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			Log.debug("Searching for: \nAuthor: " + e.getField("author")
 					+ "\nTitle: " + e.getField("title") + "\nDoi: "
 					+ e.getField("doi"));
-			Search s = new Search();
-			s.search(e);
-			BibtexEntry res = s.getResult();
-			if (res == null && Settings.getInstance().isSendDebug()) {
-				try {
-					Connection con = Jsoup.connect(
-							"http://www.jabref.gummu.de/debug.php").method(
-							Method.POST);
-					con.data("author", "" + e.getField("author"));
-					con.data("title", "" + e.getField("title"));
-					con.data("doi", "" + e.getField("doi"));
-					con.execute();
-				} catch (Exception ex) {
-					// we don't want to handle this.
-				}
-			}
-			Result tmp = new Result(e, res);
-			if (tmp.hasNewInformation())
-				results.add(new Result(e, res));
+			Search s = new Search(e);
+			Result res = s.getResult();
+			if(res.hasNewInformation())
+				results.add(res);
+			else
+				Log.notFound(e);
 		}
 	}
 
@@ -153,14 +135,17 @@ public class Fetch extends JabRefPlugin implements PushToApplication {
 			result.add(sp);
 		} else {
 			result.setSize(500, 200);
-			result.add(new JLabel("There are no results."));
+			MyBox temp = new MyBox(BoxLayout.Y_AXIS, result);
+			temp.add(new JLabel("There are no results."));
 			JButton button = new JButton("OK");
+			button.setText("ok");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					result.dispose();
 				}
 			});
-			result.add(button);
+			temp.add(button);
+			result.add(temp);
 		}
 		waiting.setVisible(false);
 		waiting.dispose();

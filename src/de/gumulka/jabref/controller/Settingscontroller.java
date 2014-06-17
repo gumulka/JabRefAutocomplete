@@ -4,7 +4,7 @@
 package de.gumulka.jabref.controller;
 
 import de.gumulka.jabref.model.Settings;
-import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.Provider;
 import de.gumulka.jabref.view.Settingspanel;
 
 /**
@@ -24,7 +24,7 @@ public class Settingscontroller {
 		set.setAutocopy(sp.isAutocopy());
 		set.setSendDebug(sp.isSendDebug());
 		set.setCheckVersion(sp.isCheckVersion());
-		for(Search s: Search.getAllSites()) {
+		for(Provider s: Provider.getAllSites()) {
 			set.setSite(s.getSearchName(), sp.isSet(s.getSearchName()));
 		}
 		set.save();

@@ -15,13 +15,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import de.gumulka.jabref.main.Log;
-import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
  * 
  */
-public class DBLP extends Search {
+public class DBLP extends Provider {
 
 	public DBLP(){
 		super(DBLP.class.getSimpleName());

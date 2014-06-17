@@ -17,13 +17,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import de.gumulka.jabref.main.Log;
-import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
  * 
  */
-public class IEEE extends Search {
+public class IEEE extends Provider {
 
 	public IEEE(){
 		super(IEEE.class.getSimpleName());

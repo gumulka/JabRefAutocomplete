@@ -9,10 +9,6 @@
 			</fileset>
 		</copy>
 	</target>
-	<target name="clean">
-		<delete dir="bin" />
-		<delete file="JabRef Importer.jar" />
-	</target>
 	<target depends="init" name="build">
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<jar destfile="JabRefAutocomplete.jar" basedir="bin" update="yes">
@@ -24,20 +20,6 @@
 				<include name="resources/" />
 			</fileset>
 		</jar>
-		<copy todir="/home/gumulka/.jabref/plugins/" file="JabRefAutocomplete.jar" />
-	</target>
-	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
-	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-		<copy todir="${ant.library.dir}">
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
-		</copy>
-		<unzip dest="${ant.library.dir}">
-			<patternset includes="jdtCompilerAdapter.jar" />
-			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
-		</unzip>
-	</target>
-	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
-		<antcall target="build" />
+		<copy todir="/media/Daten/gumulka/.jabref/plugins/" file="JabRefAutocomplete.jar" />
 	</target>
 </project>

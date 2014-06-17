@@ -17,14 +17,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import de.gumulka.jabref.main.Log;
-import de.gumulka.jabref.online.Search;
-import de.gumulka.jabref.test.htmlwriter;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
  * 
  */
-public class ACM extends Search {
+public class ACM extends Provider {
 
 	public ACM() {
 		super(ACM.class.getSimpleName());
@@ -42,7 +41,6 @@ public class ACM extends Search {
 					.execute();
 			Document doc = res.parse();
 			Connection con = Jsoup.connect("http://dl.acm.org/results.cfm");
-			// TODO copy Cookies
 			for (Entry<String, String> cookie : res.cookies().entrySet()) {
 				con.cookie(cookie.getKey(), cookie.getValue());
 			}
@@ -98,7 +96,6 @@ public class ACM extends Search {
 			res = con.execute();
 
 			doc = res.parse();
-			htmlwriter.write(doc.html());
 			if (doc.select("p:contains(Found)").first().text()
 					.contains("Found 1 within")) {
 				String url = "http://dl.acm.org/"

@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import net.sf.jabref.BibtexEntry;
 import de.gumulka.jabref.controller.CopyButton;
 import de.gumulka.jabref.model.Result;
 
@@ -27,9 +28,13 @@ public class Resultview extends JPanel {
 	private JButton confirmall;
 
 	private Container father;
-	
+
+	private BibtexEntry offline;
+	private List<BibtexEntry> found;
 	private List<JButton> buttons;
 	private List<JTextArea> fields;
+	private GridBagConstraints c;
+	private Result result;
 	/**
 	 * 
 	 */
@@ -39,58 +44,67 @@ public class Resultview extends JPanel {
 		this.father = father;
 		buttons = new LinkedList<JButton>();
 		fields = new LinkedList<JTextArea>();
-		
-		GridBagConstraints c = new GridBagConstraints();
+		found = result.getAllNew();
+		offline = result.getEntry();
+		this.result = result;
+		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.NORTH;
-		this.setLayout(new GridBagLayout());
-		JLabel title;
-		JTextArea orign, copy;
-		Set<String> keys = result.getEntry().getAllFields();
-		keys.addAll(result.getAllFields());
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
+		this.setLayout(new GridBagLayout());
+		for(int i = 0; i<found.size();i++) {
+			this.addComparison(i);
+		}
+	}
+	
+	private void addComparison(int i) {
+		BibtexEntry online = found.get(i);
+		JLabel title;
+		JTextArea orign, copy;
+		Set<String> keys = offline.getAllFields();
+		keys.addAll(online.getAllFields());
 		c.gridwidth = 3;
-		this.add(new JLabel(result.getEntry().getCiteKey()), c);
+		this.add(new JLabel(offline.getCiteKey()), c);
 		c.gridx = 3;
 		confirmall = new JButton("import dataset");
-		confirmall.setActionCommand("COPYALL");
+		confirmall.setActionCommand("" + i+";COPYALL");
 		confirmall.addActionListener(new CopyButton(result, this));
 		this.add(confirmall, c);
 		c.gridwidth = 1;
 		c.gridy++;
-		if(!result.getEntry().getType().equals(result.getType())) {
+		if(!offline.getType().equals(online.getType())) {
 			c.gridx = 0;
 			this.add(new JLabel("TYPE"),c);
 			c.gridx = 1;
-			this.add(new JLabel(result.getType().getName()),c);
+			this.add(new JLabel(offline.getType().getName()),c);
 			c.gridx = 2;
-			this.add(new JLabel(result.getType().getName()),c);
+			this.add(new JLabel(online.getType().getName()),c);
 			c.gridx = 3;
 			JButton confirm = new JButton("change Type");
 			buttons.add(confirm);
-			confirm.setActionCommand("TYPECHANGE");
+			confirm.setActionCommand("" + i+";TYPECHANGE");
 			confirm.addActionListener(new CopyButton(result,this));
 			this.add(confirm, c);
 			c.gridy++;
 		}
 			
 		for (String s : keys) {
-			if (result.getField(s) == null)
+			if (online.getField(s) == null)
 				continue;
-			if (result.getField(s).equalsIgnoreCase(
-					result.getEntry().getField(s)))
+			if (online.getField(s).equalsIgnoreCase(
+					offline.getField(s)))
 				continue;
 			title = new JLabel(s);
-			orign = new JTextArea(result.getEntry().getField(s));
+			orign = new JTextArea(offline.getField(s));
 			orign.setLineWrap(true);
 			orign.setEditable(false);
-			copy = new JTextArea(result.getField(s));
+			copy = new JTextArea(online.getField(s));
 			copy.setLineWrap(true);
 			copy.setEditable(true);
-			copy.setName(s);
+			copy.setName("" + i+";" + s);
 			fields.add(copy);
 			c.gridx = 0;
 			this.add(title, c);
@@ -101,7 +115,7 @@ public class Resultview extends JPanel {
 			c.gridx = 3;
 			JButton confirm = new JButton("import new");
 			buttons.add(confirm);
-			confirm.setActionCommand(s);
+			confirm.setActionCommand("" + i+";" + s);
 			confirm.addActionListener(new CopyButton(result, this));
 			this.add(confirm, c);
 			c.gridy++;

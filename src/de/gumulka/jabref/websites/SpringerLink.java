@@ -17,13 +17,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.gumulka.jabref.main.Log;
-import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
  * 
  */
-public class SpringerLink extends Search {
+public class SpringerLink extends Provider {
 
 	public SpringerLink() {
 		super(SpringerLink.class.getSimpleName());

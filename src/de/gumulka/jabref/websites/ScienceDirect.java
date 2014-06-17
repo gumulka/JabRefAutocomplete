@@ -19,14 +19,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.gumulka.jabref.main.Log;
-import de.gumulka.jabref.online.Search;
-import de.gumulka.jabref.test.htmlwriter;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
  * 
  */
-public class ScienceDirect extends Search {
+public class ScienceDirect extends Provider {
 
 	public ScienceDirect(){
 		super(ScienceDirect.class.getSimpleName());
@@ -64,7 +63,6 @@ public class ScienceDirect extends Search {
 			con.referrer("http://www.sciencedirect.com");
 			con.method(Method.GET);
 			res = con.execute();
-			htmlwriter.write(res.body());
 			doc = res.parse();
 			Elements hits = doc.select("a[href*=science/article/]");
 			

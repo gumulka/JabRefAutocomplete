@@ -34,6 +34,7 @@ public class MyBox extends Box {
 
 	public void remove(Component comp)  {
 		super.remove(comp);
+		top.repaint();
 		if(this.getComponentCount()==1) {
 			top.setVisible(false);
 			top.dispose();

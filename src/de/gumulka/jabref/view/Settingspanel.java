@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import de.gumulka.jabref.model.Settings;
-import de.gumulka.jabref.online.Search;
+import de.gumulka.jabref.online.Provider;
 
 /**
  * @author Fabian Pflug
@@ -59,7 +59,7 @@ public class Settingspanel extends JPanel {
 		this.add(new JLabel("Search this sites:"), c);
 		
 		JCheckBox tmp;
-		for(Search s: Search.getAllSites()) {
+		for(Provider s: Provider.getAllSites()) {
 			tmp = new JCheckBox();
 			tmp.setText(s.getSearchName());
 			sites.add(tmp);
